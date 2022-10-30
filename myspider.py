@@ -1,3 +1,4 @@
+from urllib.parse import urljoin
 import scrapy
 import json
 
@@ -22,25 +23,19 @@ def urls_brands():
 class BlogSpider(scrapy.Spider):
     name = 'blogspider'
     start_urls = urls_brands()
-    print(start_urls)
     marcas = list()
 
     def parse(self, response):
-        for name in response.css('.rankingName'):
-            brand = name.css('::text').get()
-            self.marcas.append({'name': brand})
-            yield {'name': brand}
-
         for href in response.css('.brandLine a::attr(href)'):
-            yield response.follow(href, self.parse_dir_contents)
+            url = response.urljoin(href.extract())
+            yield scrapy.Request(url, callback = self.parse_dir_contents)
 
     def parse_dir_contents(self, response):
-        print(response.url)
-    #   for sel in response.xpath('//ul/li'):
-    #      item['title'] = sel.xpath('a/text()').extract()
-    #      item['link'] = sel.xpath('a/@href').extract()
-    #      item['desc'] = sel.xpath('text()').extract()
-    #      yield item        
+        brand = response.css('.brandName span::text').get()
+        gbin = response.css('.brandInfoText span::text').get()
+        self.marcas.append({'name': brand, 'gbin': gbin})
+    
+        write_results_file(self.marcas)
 
     def close(self, reason):
-        write_results_file(self.marcas)
+        print('Acabou, meu patrão!')
