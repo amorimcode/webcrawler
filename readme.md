@@ -8,8 +8,10 @@ Trabalho desenvolvido para a matéria de Tópicos avançados de banco de dados m
 
 1.  Ativar a virtual env
 
-    venv/Scripts/activate
+`venv/Scripts/activate`
 
 2.  Rodar Spider
 
-    scrapy runspider myspider.py
+`scrapy runspider myspider.py`
+
+As informações coletadas serão preenchidas automaticamente no arquivo marcas.json.
