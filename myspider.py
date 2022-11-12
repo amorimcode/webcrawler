@@ -33,7 +33,9 @@ class BlogSpider(scrapy.Spider):
     def parse_dir_contents(self, response):
         brand = response.css('.brandName span::text').get()
         gbin = response.css('.brandInfoText span::text').get()
-        self.marcas.append({'name': brand, 'gbin': gbin})
+        site = response.css('.brandInfoText a::text').get()
+        
+        self.marcas.append({'name': brand, 'gbin': gbin, 'site': site})
     
         write_results_file(self.marcas)
 
