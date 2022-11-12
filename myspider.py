@@ -1,6 +1,8 @@
 from urllib.parse import urljoin
 import scrapy
 import json
+import base64
+import requests
 
 
 def write_results_file(marcas):
@@ -34,8 +36,12 @@ class BlogSpider(scrapy.Spider):
         brand = response.css('.brandName span::text').get()
         gbin = response.css('.brandInfoText span::text').get()
         site = response.css('.brandInfoText a::text').get()
+        imgUrl = 'https://www.rankingthebrands.com/' + response.css('.brandLogo img::attr(src)').get()
+        base64Img = str(base64.b64encode(requests.get(imgUrl).content))
+        country = response.css('.brandInfoText span::text')[2].get()
+        rtbScore = response.css('.brandInfoText span::text')[1].get()
         
-        self.marcas.append({'name': brand, 'gbin': gbin, 'site': site})
+        self.marcas.append({'name': brand, 'gbin': gbin, 'site': site, 'imgBase64': base64Img, 'country': country, 'rtbScore': rtbScore})
     
         write_results_file(self.marcas)
 
